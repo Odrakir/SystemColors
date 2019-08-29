@@ -8,9 +8,70 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct SingleColorCell: View
+{
+    var uiColor: UIColor
+    
     var body: some View {
-        Text("Hello World")
+        ZStack(alignment: .bottom) {
+            Rectangle()
+                .foregroundColor(Color(uiColor))
+            Text("\(uiColor.RGBAString)")
+                .font(.caption)
+                .padding(6)
+                .foregroundColor(.white)
+                .background(Color.black)
+        }
+    }
+}
+
+struct ColorCell: View
+{
+    var color: SystemColor
+    var darkTraitCollection = UITraitCollection(userInterfaceStyle: .dark)
+    var lightTraitCollection = UITraitCollection(userInterfaceStyle: .light)
+    
+    var body: some View {
+        VStack() {
+            HStack(alignment: .center, spacing: 0) {
+                ZStack(alignment: .bottom) {
+                    SingleColorCell(uiColor: color.uiColor.resolvedColor(with: lightTraitCollection))
+                }
+                ZStack(alignment: .bottom) {
+                    SingleColorCell(uiColor: color.uiColor.resolvedColor(with: darkTraitCollection))
+                }
+            }
+            .frame(height: 100)
+            Text("\(color.name)")
+                .font(.caption)
+                .padding(6)
+                .foregroundColor(.white)
+                .background(Color.black)
+        }
+    }
+}
+
+struct SplitBackground: View
+{
+    var body: some View {
+        HStack(alignment: .center, spacing: 0) {
+            Rectangle()
+                .foregroundColor(Color.white)
+            Rectangle()
+                .foregroundColor(Color.black)
+        }
+    }
+}
+
+struct ContentView: View
+{
+    var body: some View {
+        List {
+            ForEach(SystemColor.allColors, id: \.name) { color in
+                ColorCell(color: color)
+                    .listRowBackground(SplitBackground())
+            }
+        }
     }
 }
 
